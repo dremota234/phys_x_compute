@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- Формат выходного файла: Library собирает библиотеку (.dll), а не запускаемый .exe -->
+		<OutputType>Library</OutputType>
+
+		<!-- Целевая платформа .NET 11 (автоматически активирует синтаксис C# 15) -->
+		<TargetFramework>net11.0</TargetFramework>
+
+		<!-- Автоматически подключает базовые пространства имен (System, System.IO и др.) во всех файлах -->
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Включает строгую проверку null-ссылок на этапе компиляции -->
+		<Nullable>enable</Nullable>
+
+		<!-- Разрешает ключевое слово unsafe, указатели (*) и прямую работу с неуправляемой памятью -->
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<!-- Отключает генерацию атрибута [TargetFramework] (убирает лишние метаданные из файла) -->
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+
+		<!-- Отключает генерацию стандартных атрибутов сборки (версия, компания и т.д.) -->
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<!-- Включает компиляцию напрямую в нативный машинный код (NativeAOT) без JIT -->
+		<PublishAot>true</PublishAot>
+
+		<!-- Собирает нативную C-совместимую динамическую библиотеку (.dll / .so / .dylib) -->
+		<NativeLib>Shared</NativeLib>
+
+		<!-- Включает минимальный рантайм внутрь библиотеки (чтобы не требовать установки .NET на ПК игрока) -->
+		<SelfContained>true</SelfContained>
+
+		<!-- Вырезает таблицы локализации ICU (сильно уменьшает вес файла и ускоряет инициализацию) -->
+		<InvariantGlobalization>true</InvariantGlobalization>
+
+		<!-- Отключает многопоточный серверный GC, чтобы он не забирал ядра CPU у игры и Vulkan -->
+		<ServerGarbageCollection>false</ServerGarbageCollection>
+
+		<!-- Отключает фоновую сборку мусора, чтобы исключить случайные микрофризы в кадре -->
+		<ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+	</PropertyGroup>
+
+	<!-- Настройки агрессивной оптимизации и вырезания лишнего только для Release-сборки -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<!-- Приоритет максимальной скорости исполнения (активный инлайнинг, развертывание циклов) -->
+		<OptimizationPreference>Speed</OptimizationPreference>
+
+		<!-- Профиль инструкций процессора: включает AVX, AVX2 и FMA, но работает на всех ПК с ~2015 года -->
+		<IlcInstructionSet>x86-64-v3</IlcInstructionSet>
+
+		<!-- Максимально агрессивное удаление неиспользуемого кода из всех подключенных сборок -->
+		<TrimMode>full</TrimMode>
+
+		<!-- Полностью отключает рефлексию (System.Reflection) и удаляет связанные с ней таблицы -->
+		<IlcDisableReflection>true</IlcDisableReflection>
+
+		<!-- Запрещает сохранять метаданные для типов, на которые нет прямых статических ссылок -->
+		<IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+
+		<!-- Удаляет имена методов для трассировки стека (в ошибках остаются только адреса в памяти) -->
+		<IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+
+		<!-- Отключает подсистему трассировки событий ETW / EventSource -->
+		<EventSourceSupport>false</EventSourceSupport>
+
+		<!-- Отключает телеметрию сетевых и HTTP-запросов -->
+		<HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+
+		<!-- Отключает поддержку горячей перезагрузки кода (Hot Reload) -->
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+
+		<!-- Заменяет длинные тексты стандартных исключений .NET на короткие коды ресурсов -->
+		<UseSystemResourceKeys>true</UseSystemResourceKeys>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Пропатченный компилятор NativeAOT 11.0.0 (без уязвимости Brotli GHSA-p3jp-9v83-76w9) -->
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="11.0.0" />
+
+		<!-- Нативные привязки к графическому и вычислительному API Vulkan -->
+		<PackageReference Include="Silk.NET.Vulkan" Version="2.23.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Вшивает файл списка шейдеров внутрь самой библиотеки как ресурс -->
+		<EmbeddedResource Include="Logic_OLD\VulcanLogic\shaders_list.txt" />
+	</ItemGroup>
+
+</Project>

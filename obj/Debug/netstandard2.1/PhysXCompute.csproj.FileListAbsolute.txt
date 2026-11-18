@@ -1,0 +1,3 @@
+C:\Users\User\PhysXCompute\Phys\obj\Debug\netstandard2.1\PhysXCompute.csproj.AssemblyReference.cache
+C:\Users\User\PhysXCompute\Phys\obj\Debug\netstandard2.1\PhysXCompute.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\PhysXCompute\Phys\obj\Debug\netstandard2.1\PhysXCompute.csproj.CoreCompileInputs.cache
